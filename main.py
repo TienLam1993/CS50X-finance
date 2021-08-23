@@ -36,7 +36,8 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///finance.db")
+db_url = os.environ.get('DATABASE_URL')
+db = SQL("db_url")
 
 
 db.execute('CREATE TABLE IF NOT EXISTS transactions ( id INTEGER, user_id INTEGER NOT NULL, symbol TEXT NOT NULL, share INTEGER NOT NULL, price NUMERIC NOT NULL, type TEXT NOT NULL, time TEXT NOT NULL, FOREIGN KEY(user_id) REFERENCES users(id), PRIMARY KEY(id))')
