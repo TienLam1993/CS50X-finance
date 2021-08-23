@@ -37,16 +37,12 @@ Session(app)
 
 # Configure CS50 Library to use SQLite database
 db_url = os.environ.get('DATABASE_URL')
-db = SQL("db_url")
 
+db = SQL(db_url)
 
-db.execute('CREATE TABLE IF NOT EXISTS transactions ( id INTEGER, user_id INTEGER NOT NULL, symbol TEXT NOT NULL, share INTEGER NOT NULL, price NUMERIC NOT NULL, type TEXT NOT NULL, time TEXT NOT NULL, FOREIGN KEY(user_id) REFERENCES users(id), PRIMARY KEY(id))')
+# for sqlite version
+# db.execute('CREATE TABLE IF NOT EXISTS transactions ( id INTEGER, user_id INTEGER NOT NULL, symbol TEXT NOT NULL, share INTEGER NOT NULL, price NUMERIC NOT NULL, type TEXT NOT NULL, time TEXT NOT NULL, FOREIGN KEY(user_id) REFERENCES users(id), PRIMARY KEY(id))')
 
-'''
-# Make sure API key is set
-if not os.environ.get("API_KEY"):
-    raise RuntimeError("API_KEY not set")
-'''
 
 @app.route("/")
 @login_required
@@ -60,7 +56,7 @@ def index():
     length = len(data1)
     for i in range(length):
         price.append(usd(float(lookup(data1[i]['symbol'])['price'])))
-        total.append(usd(float(lookup(data1[i]['symbol'])['price']) * float(data1[i]['SUM(share)'])))
+        total.append(usd(float(lookup(data1[i]['symbol'])['price']) * float(data1[i]['sum'])))
 
     cash = usd(float(db.execute('SELECT cash FROM users WHERE id = ?', session['user_id'])[0]['cash']))
     return render_template('index.html', data=data1, price=price, total=total, length=length, cash=cash)
@@ -201,7 +197,7 @@ def register():
             return redirect('login')
 
     else:
-        return render_template('register.html')
+        return render_template('register.html') # method == GET
 
 
 @app.route("/sell", methods=["GET", "POST"])
@@ -217,7 +213,7 @@ def sell():
     length = len(data1)
     for i in range(length):
         symbols.append(data1[i]['symbol'])
-        shares.append(int(data1[i]['SUM(share)']))
+        shares.append(int(data1[i]['sum']))
 
     cash = float(db.execute('SELECT cash FROM users WHERE id = ?', session['user_id'])[0]['cash'])
 
