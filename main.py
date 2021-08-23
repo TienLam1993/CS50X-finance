@@ -41,11 +41,11 @@ db = SQL("sqlite:///finance.db")
 
 db.execute('CREATE TABLE IF NOT EXISTS transactions ( id INTEGER, user_id INTEGER NOT NULL, symbol TEXT NOT NULL, share INTEGER NOT NULL, price NUMERIC NOT NULL, type TEXT NOT NULL, time TEXT NOT NULL, FOREIGN KEY(user_id) REFERENCES users(id), PRIMARY KEY(id))')
 
-
+'''
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
     raise RuntimeError("API_KEY not set")
-
+'''
 
 @app.route("/")
 @login_required
